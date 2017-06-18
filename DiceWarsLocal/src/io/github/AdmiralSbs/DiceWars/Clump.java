@@ -1,6 +1,7 @@
 package io.github.AdmiralSbs.DiceWars;
 
 import java.awt.*;
+import java.awt.List;
 import java.awt.geom.*;
 import java.util.*;
 
@@ -21,10 +22,10 @@ public class Clump extends Path2D.Double {
 				}
 			}
 		}
-		 System.out.println("Hex: " + hex.length);
-		 System.out.println("Points: " + points.size());
-		 // for (int i = 0; i < points.size(); i++)
-			 // System.out.println(points.get(i).toString());
+		System.out.println("Hex: " + hex.length);
+		System.out.println("Points: " + points.size());
+		// for (int i = 0; i < points.size(); i++)
+		// System.out.println(points.get(i).toString());
 		filterPoints();
 	}
 
@@ -57,7 +58,7 @@ public class Clump extends Path2D.Double {
 			// Point2D.Double[points.size()]);
 
 			int[] linesPerPoint = new int[points.size()];
-			for (int i = 0; i < points.size(); i++) { // Finds lines per points
+			for (int i = 0; i < points.size(); i++) { // Finds lines per point
 														// based of lines
 				for (int j = 0; j < lines.size(); j++) {
 					if (((Point2D.Double) lines.get(j).getP1()).equals(points.get(i)))
@@ -71,8 +72,9 @@ public class Clump extends Path2D.Double {
 			System.out.println("Lines size:" + lines.size());
 			ArrayList<Line2D.Double> lessLines = copyArrayListLine(lines);
 
-			for (int i = 0; i < lessLines.size(); i++) { // Removes excess lines
-															// from lessLines
+			for (int i = 0; i < lessLines.size(); i++) { // Removes lines
+															// connecting points
+															// of 3
 				Point2D.Double p1 = (Point2D.Double) lessLines.get(i).getP1();
 				Point2D.Double p2 = (Point2D.Double) lessLines.get(i).getP2();
 				if (linesPerPoint[points.indexOf(p1)] == 3 && linesPerPoint[points.indexOf(p2)] == 3) {
@@ -84,7 +86,8 @@ public class Clump extends Path2D.Double {
 			System.out.println("LessLines size:" + lessLines.size());
 
 			linesPerPoint = new int[points.size()];
-			for (int i = 0; i < points.size(); i++) {
+			for (int i = 0; i < points.size(); i++) { // Finds lines per point
+														// based off lessLines
 				for (int j = 0; j < lessLines.size(); j++) {
 					if (((Point2D.Double) lessLines.get(j).getP1()).equals(points.get(i)))
 						linesPerPoint[i]++;
@@ -94,7 +97,9 @@ public class Clump extends Path2D.Double {
 			}
 			System.out.println(Arrays.toString(linesPerPoint));
 
-			for (int i = 0; i < lines.size(); i++) {
+			for (int i = 0; i < lines.size(); i++) { // Adds to lessLines any
+														// lines connecting
+														// points of 1
 				Point2D.Double p1 = (Point2D.Double) lines.get(i).getP1();
 				Point2D.Double p2 = (Point2D.Double) lines.get(i).getP2();
 				if (linesPerPoint[points.indexOf(p1)] == 1 && linesPerPoint[points.indexOf(p2)] == 1) {
@@ -102,12 +107,73 @@ public class Clump extends Path2D.Double {
 				}
 			}
 			System.out.println("LessLines size:" + lessLines.size());
+			
+			linesPerPoint = new int[points.size()];
+			for (int i = 0; i < points.size(); i++) { // Finds lines per point
+														// based off lessLines
+				for (int j = 0; j < lessLines.size(); j++) {
+					if (((Point2D.Double) lessLines.get(j).getP1()).equals(points.get(i)))
+						linesPerPoint[i]++;
+					else if (((Point2D.Double) lessLines.get(j).getP2()).equals(points.get(i)))
+						linesPerPoint[i]++;
+				}
+			}
+			System.out.println(Arrays.toString(linesPerPoint));
+			
+			ArrayList<ArrayList<Line2D.Double>> linesP = new ArrayList<ArrayList<Line2D.Double>>();
+			ArrayList<ArrayList<Point2D.Double>> extraP = new ArrayList<ArrayList<Point2D.Double>>();
+			ArrayList<Point2D.Double> miniP = new ArrayList<Point2D.Double>();
+			for (int i = 0; i < points.size(); i++) { // Fills miniP with all points of 1
+				if (linesPerPoint[i] == 1) {
+					miniP.add(points.get(i));
+					linesP.add(new ArrayList<Line2D.Double>());
+					extraP.add(new ArrayList<Point2D.Double>());
+					for (int q = 0; q < lines.size(); q++) {
+						if (((Point2D.Double) lines.get(q).getP1()).equals(points.get(i))) {
+							linesP.get(linesP.size()-1).add(lines.get(q));
+							extraP.get(extraP.size()-1).add((Point2D.Double) lines.get(q).getP2());
+						}
+						else if (((Point2D.Double) lines.get(q).getP2()).equals(points.get(i))) {
+							linesP.get(linesP.size()-1).add(lines.get(q));
+							extraP.get(extraP.size()-1).add((Point2D.Double) lines.get(q).getP1());
+						}
+					}
+				}
+			}
+			
+			for (int i = 0; i < miniP.size() - 1; i++) {
+				Point2D zeroPoint = null;
+				for (int k = 0; k < extraP.get(i).size(); k++) {
+					if (linesPerPoint[points.indexOf(extraP.get(i).get(k))] == 0) {
+						zeroPoint = extraP.get(i).get(k);
+						for (int j = i + 1; j < miniP.size(); j++) {
+							if (extraP.get(j).contains(zeroPoint)) {
+								lessLines.add(linesP.get(i).get(k));
+								lessLines.add(linesP.get(j).get(extraP.get(j).indexOf(zeroPoint)));
+							}
+						}
+					}
+				}
+			}
+			
 			lines = copyArrayListLine(lessLines);
-			System.out.println("Lines size:" + lessLines.size());
+			System.out.println("Lines size:" + lines.size());
+			
+			linesPerPoint = new int[points.size()];
+			for (int i = 0; i < points.size(); i++) { // Finds lines per point
+														// based off lessLines
+				for (int j = 0; j < lessLines.size(); j++) {
+					if (((Point2D.Double) lessLines.get(j).getP1()).equals(points.get(i)))
+						linesPerPoint[i]++;
+					else if (((Point2D.Double) lessLines.get(j).getP2()).equals(points.get(i)))
+						linesPerPoint[i]++;
+				}
+			}
+			System.out.println(Arrays.toString(linesPerPoint));
 
-			ArrayList<Point2D.Double> miniP = copyArrayList(points);
+			/*ArrayList<Point2D.Double>*/ miniP = copyArrayList(points);
 			for (int i = 0; i < linesPerPoint.length; i++) {
-				if (linesPerPoint[i] == 0) {
+				if (linesPerPoint[i] == 0) { // Removes points of 0
 					miniP.remove(points.get(i));
 				}
 			}
@@ -120,7 +186,7 @@ public class Clump extends Path2D.Double {
 				System.out.println("Points size: " + points.size());
 			}
 			// System.out.println(ijk);
-			if (ijk > 5) {
+			if (ijk > 1) {
 				System.exit(0);
 			}
 		} while (lines.size() != points.size());
@@ -222,7 +288,7 @@ public class Clump extends Path2D.Double {
 	 * newPointsLeft = copyArrayList(pointsLeft);
 	 * newPointsLeft.remove(pointsLeft.get(i)); ArrayList<Line2D.Double>
 	 * newLines = new ArrayList<Line2D.Double>(); newLines.add(newLine); if
-	 * (checkNextPoint(newPointsLeft, pointsLeft.get(i), newLines)) {
+	 * (che)ckNextPoint(newPointsLeft, pointsLeft.get(i), newLi)nes)) {
 	 * finalPoints.add(pointsLeft.get(i)); return true; } } } return false; }
 	 */
 
