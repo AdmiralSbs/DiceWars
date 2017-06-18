@@ -2,7 +2,6 @@ package io.github.AdmiralSbs.DiceWars;
 
 import java.awt.*;
 import java.awt.geom.*;
-import java.util.Arrays;
 
 public class Hex extends Path2D.Double {
 
@@ -41,6 +40,13 @@ public class Hex extends Path2D.Double {
 		radius = s;
 		setCoords(x, y);
 		color = c;
+	}
+	
+	public Hex(double x, double y, double s, int id) {
+		radius = s;
+		setCoords(x, y);
+		color = DEFAULTCOLOR;
+		parentID = id;
 	}
 	
 	public Hex(double x, double y, double s, Color c, int id) {
@@ -92,6 +98,10 @@ public class Hex extends Path2D.Double {
 	
 	public int getID() {
 		return parentID;
+	}
+	
+	public void setColor(Color c) {
+		color = c;
 	}
 	
 	public void setCoords(double x, double y) {

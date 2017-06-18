@@ -9,7 +9,7 @@ public class DiceWars extends JFrame {
 
 	public DiceWars() throws IOException {
 		setTitle("Dice Wars");
-        setSize(400,400);
+        setSize(1300,740);
         setLocation(200,200);
         setContentPane(new HexDisplay(new File("Maps" + File.separator + "1.dicewars")));
         setVisible(true);

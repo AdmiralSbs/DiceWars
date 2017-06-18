@@ -26,21 +26,20 @@ public class HexDisplay extends JPanel {
 		hex = new Hex[width][height];
 		clumps = new Clump[temp[2] + 1];
 		List<List<Hex>> hexAssignments = new ArrayList<List<Hex>>();
-		for (int i = 0; i < temp[2] + 1; i++) {
+		for (int i = 0; i < clumps.length; i++) {
 			hexAssignments.add(new ArrayList<Hex>());
 		}
+		String[] tempS;
 		for (int h = 0; h < height; h++) {
+			temp = spaceSplit(key.nextLine());
 			for (int w = 0; w < width; w++) {
-				String[] tempS = key.nextLine().split(",");
-				int clumpID = Integer.parseInt(tempS[1]);
+				int clumpID = temp[w];
 				if (w % 2 == 0)
-					hex[w][h] = new Hex(.75 * size * (w + .75), Hex.sqrt3
-							* size / 4.0 * (2 * h + 1.5), size / 2.0,
-							stringToColor(tempS[0]), clumpID);
+					hex[w][h] = new Hex(.75 * size * (w + .75), Hex.sqrt3 * size / 4.0 * (2 * h + 1.5), size / 2.0,
+							clumpID);
 				else
-					hex[w][h] = new Hex(.75 * size * (w + .75), Hex.sqrt3
-							* size / 4.0 * (2 * h + 2.5), size / 2.0,
-							stringToColor(tempS[0]), clumpID);
+					hex[w][h] = new Hex(.75 * size * (w + .75), Hex.sqrt3 * size / 4.0 * (2 * h + 2.5), size / 2.0,
+							clumpID);
 				// System.out.println(hexAssignments.size());
 				// System.out.println(hexAssignments.get(clumpID).size());
 				hexAssignments.get(clumpID).add(hex[w][h]);
@@ -48,10 +47,11 @@ public class HexDisplay extends JPanel {
 				// hex[w][h].getY());
 			}
 		}
+		tempS = key.nextLine().split(",");
 		for (int i = 1; i < clumps.length; i++) {
 			Hex[] tem = (Hex[]) hexAssignments.get(i).toArray(new Hex[hexAssignments.get(i).size()]);
 			System.out.println("Building clump " + i);
-			clumps[i] = new Clump(tem);
+			clumps[i] = new Clump(tem, stringToColor(tempS[i-1]));
 			System.out.println("Built clump " + i);
 		}
 		key.close();
@@ -60,14 +60,13 @@ public class HexDisplay extends JPanel {
 	}
 
 	public void starting() {
-		setPreferredSize(new Dimension(400, 400));
+		setPreferredSize(new Dimension(1280, 720));
 		setLayout(new FlowLayout());
-		myImage = new BufferedImage(400, 400, BufferedImage.TYPE_INT_RGB);
+		myImage = new BufferedImage(1280, 720, BufferedImage.TYPE_INT_RGB);
 		drawer = myImage.createGraphics(); // Here
-		drawer.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
-		drawer.setColor(Color.BLUE);
-		drawer.fillRect(0, 0, 400, 400);
+		drawer.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		drawer.setColor(Color.WHITE);
+		drawer.fillRect(0, 0, 1280, 720);
 		// drawHex(drawer);
 		drawClumps(drawer);
 		repaint();
@@ -75,6 +74,15 @@ public class HexDisplay extends JPanel {
 
 	public int[] commaSplit(String s) {
 		String[] str = s.split(",");
+		int[] ret = new int[str.length];
+		for (int i = 0; i < str.length; i++) {
+			ret[i] = Integer.parseInt(str[i]);
+		}
+		return ret;
+	}
+	
+	public int[] spaceSplit(String s) {
+		String[] str = s.split(" ");
 		int[] ret = new int[str.length];
 		for (int i = 0; i < str.length; i++) {
 			ret[i] = Integer.parseInt(str[i]);
@@ -112,7 +120,7 @@ public class HexDisplay extends JPanel {
 			return Color.black;
 		}
 	}
-	
+
 	public static int getHSize() {
 		return size;
 	}
