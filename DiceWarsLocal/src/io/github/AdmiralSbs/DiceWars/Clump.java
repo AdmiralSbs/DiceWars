@@ -259,6 +259,7 @@ public class Clump extends Path2D.Double {
 		g2.setColor(color);
 		g2.fill(this);
 		g2.setColor(Hex.DEFAULTCOLOR);
+		g2.setStroke(new BasicStroke(2));
 		g2.draw(this);
 		// g.drawString(x + " " + y, x, y);
 		// System.out.println("Drew solo");
