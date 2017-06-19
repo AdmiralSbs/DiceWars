@@ -10,7 +10,7 @@ import java.io.*;
 
 public class HexDisplay extends JPanel {
 	private static final long serialVersionUID = 1L;
-	private static int size = 50;
+	private static int size = 30;
 	private int height;
 	private int width;
 	private Hex[][] hex;
