@@ -10,7 +10,7 @@ public class Clump extends Path2D.Double {
     private ArrayList<Line2D.Double> lines = new ArrayList<>();
     private Color color;
     //private ArrayList<Point2D.Double> points = new ArrayList<>();
-
+    //change
     public Clump(Hex[] h, Color c) {
         hex = h;
         color = c;
