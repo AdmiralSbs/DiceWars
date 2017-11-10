@@ -7,8 +7,9 @@ import java.util.*;
 public class Clump extends Path2D.Double {
     private static final long serialVersionUID = 1L;
     private final Hex[] hex;
-    private ArrayList<Line2D.Double> lines = new ArrayList<>();
+    private final ArrayList<Line2D.Double> lines = new ArrayList<>();
     private Color color;
+    private final ArrayList<Clump> neighbors = new ArrayList<>();
     //private ArrayList<Point2D.Double> points = new ArrayList<>();
 
     public Clump(Hex[] h, Color c) {
@@ -32,7 +33,7 @@ public class Clump extends Path2D.Double {
         makePathFromOrderedLines();
     }
 
-    private void printLines() {
+    /*private void printLines() {
         for (Line2D.Double ln : lines) {
             System.out.print("Line " + lines.indexOf(ln) + ": ");
             System.out.print("(" + ln.getP1().getX() + "," + ln.getP1().getY() + ") to ");
@@ -46,7 +47,7 @@ public class Clump extends Path2D.Double {
             System.out.print("(" + ln.getP1().getX() + "," + ln.getP1().getY() + ") to ");
             System.out.print("(" + ln.getP2().getX() + "," + ln.getP2().getY() + ")" + "\n");
         }
-    }
+    }*/
 
     private void filterLines() {
         System.out.println("Lines size: " + lines.size());
@@ -84,8 +85,8 @@ public class Clump extends Path2D.Double {
     }
 
     private boolean pointsAreSame(Point2D.Double p1, Point2D.Double p2) {
-        double xdif = Math.abs(p1.getX()-p2.getX());
-        double ydif = Math.abs(p1.getY()-p2.getY());
+        double xdif = Math.abs(p1.getX() - p2.getX());
+        double ydif = Math.abs(p1.getY() - p2.getY());
         return xdif < 0.1 && ydif < 0.1;
     }
 
@@ -106,8 +107,7 @@ public class Clump extends Path2D.Double {
                     finalLines.addFirst(ln);
                     lines.remove(ln);
                     break;
-                }
-                else if (pointsAreSame(f2, p1)) {
+                } else if (pointsAreSame(f2, p1)) {
                     finalLines.addLast(ln);
                     lines.remove(ln);
                     break;
@@ -147,4 +147,10 @@ public class Clump extends Path2D.Double {
             h.setColor(c);
         }
     }
+
+    public void addNeighbor(Clump c) {
+        if (!neighbors.contains(c))
+            neighbors.add(c);
+    }
+
 }
